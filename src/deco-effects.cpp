@@ -2295,6 +2295,8 @@ void smoke_t::destroy_programs()
         project2_program     = project3_program = project4_program = project5_program =
             project6_program = advect1_program = advect2_program = render_program =
                 render_overlay_program = GLuint(-1);
+
+    fragment_effect_only_program.free_resources();
 }
 
 void smoke_t::create_programs()
@@ -2466,8 +2468,10 @@ void smoke_t::create_programs()
     OpenGL::render_end();
 }
 
-smoke_t::smoke_t()
+smoke_t::smoke_t() : previous_shader_type("")
 {
+   
+
     motion_program = diffuse1_program = diffuse2_program = project1_program =
         project2_program     = project3_program = project4_program = project5_program =
             project6_program = advect1_program = advect2_program = render_program =
@@ -2769,16 +2773,6 @@ void smoke_t::step_effect(const wf::render_target_t& fb, wf::geometry_t rectangl
             GL_CALL(glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT));
         }
 
-
-
-
-
-
-
-
-
-
-
         for (int k = 0; k < diffuse_iterations; k++)
         {
             run_shader_region(diffuse1_program, border_region, wf::dimensions(rectangle));
@@ -2854,7 +2848,7 @@ void smoke_t::step_effect(const wf::render_target_t& fb, wf::geometry_t rectangl
         GL_CALL(glUniform1i(2, border_size + radius * 2));
         GL_CALL(glUniform1i(5, rectangle.width));
         GL_CALL(glUniform1i(6, rectangle.height));
-        GL_CALL(glUniform1i(7, rounded_corner_radius));
+       
        
 
         if (std::string(overlay_engine) == "beveled_glass")
@@ -2864,7 +2858,7 @@ void smoke_t::step_effect(const wf::render_target_t& fb, wf::geometry_t rectangl
 
         if (std::string(overlay_engine) == "rounded_corners")
         {
-           
+            GL_CALL(glUniform1i(7, rounded_corner_radius));
             GLfloat shadow_color_f[4] =
             {GLfloat(wf::color_t(shadow_color).r), GLfloat(wf::color_t(shadow_color).g),
                 GLfloat(wf::color_t(shadow_color).b), GLfloat(wf::color_t(shadow_color).a)};
@@ -2941,9 +2935,19 @@ fragment_effect_only_program.uniform4f("smoke_color", white); // Set smoke_color
 
 }
 
+
+
 void smoke_t::render_effect(const wf::render_target_t& fb, wf::geometry_t rectangle,
     const wf::region_t& scissor, int border_size, int title_height)
 {
+     
+
+    if (previous_shader_type != current_shader_type)
+    {
+        previous_shader_type = current_shader_type;
+        effect_updated();
+        recreate_textures(rectangle);
+    }
 
    if (fragment_effect_only_program.get_program_id(wf::TEXTURE_TYPE_RGBA) != 0)
     {

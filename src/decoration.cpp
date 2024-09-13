@@ -55,6 +55,7 @@ class wayfire_pixdecor : public wf::plugin_interface_t
     wf::option_wrapper_t<wf::color_t> bg_text_color{"pixdecor/bg_text_color"};
     wf::option_wrapper_t<std::string> ignore_views_string{"pixdecor/ignore_views"};
     wf::option_wrapper_t<std::string> always_decorate_string{"pixdecor/always_decorate"};
+    wf::option_wrapper_t<std::string> compute_fragment_shader{"pixdecor/compute_fragment_shader"};
     wf::option_wrapper_t<std::string> effect_type{"pixdecor/effect_type"};
     wf::option_wrapper_t<std::string> overlay_engine{"pixdecor/overlay_engine"};
     wf::option_wrapper_t<bool> effect_animate{"pixdecor/animate"};
@@ -397,6 +398,7 @@ class wayfire_pixdecor : public wf::plugin_interface_t
         }
 
         titlebar.set_callback([=] {option_changed_cb(false, true);});
+        compute_fragment_shader.set_callback([=] {option_changed_cb(false, false);});
         effect_type.set_callback([=] {option_changed_cb(false, false);});
         overlay_engine.set_callback([=] {option_changed_cb(true, false);});
         effect_animate.set_callback([=] {option_changed_cb(false, false);});

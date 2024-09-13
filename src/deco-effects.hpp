@@ -11,6 +11,10 @@ namespace pixdecor
 {
 class smoke_t
 {
+
+std::string current_shader_type;
+std::string previous_shader_type;
+    
     /** background effects */
     GLuint motion_program,
         diffuse1_program, diffuse2_program,
@@ -25,7 +29,7 @@ class smoke_t
 
     int saved_width = -1, saved_height = -1;
 
-  wf::option_wrapper_t<std::string> compute_fragment_shader{"pixdecor/compute_fragment_shader"};
+    wf::option_wrapper_t<std::string> compute_fragment_shader{"pixdecor/compute_fragment_shader"};
     wf::option_wrapper_t<std::string> effect_type{"pixdecor/effect_type"};
     wf::option_wrapper_t<std::string> overlay_engine{"pixdecor/overlay_engine"};
     wf::option_wrapper_t<bool> effect_animate{"pixdecor/animate"};
